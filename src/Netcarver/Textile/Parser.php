@@ -1743,9 +1743,9 @@ class Parser
         $this->glyph_replace = array();
 
         // Dimension sign
-        $this->glyph_search[] = '/(?<=\b|x)([0-9]++[\])]?[\'"]? ?)[x]( ?[\[(]?)(?=[+-]?'.$cur.'[0-9]*\.?[0-9]++)/i'.
-            $this->regex_snippets['mod'];
-        $this->glyph_replace[] = '$1'.$this->symbols['dimension'].'$2';
+        //$this->glyph_search[] = '/(?<=\b|x)([0-9]++[\])]?[\'"]? ?)[x]( ?[\[(]?)(?=[+-]?'.$cur.'[0-9]*\.?[0-9]++)/i'.
+            //$this->regex_snippets['mod'];
+        //$this->glyph_replace[] = '$1'.$this->symbols['dimension'].'$2';
 
         // Apostrophe
         $this->glyph_search[] = '/('.$this->regex_snippets['wrd'].'|\))\''.
