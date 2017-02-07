@@ -2057,12 +2057,15 @@ class Parser
             }
         }
 
-        if (preg_match("/\{([^}]*)\}/", $matched, $sty)) {
-            if ($sty[1] = $this->cleanAttribs($sty[1])) {
-                $style[] = rtrim($sty[1], ';');
-            }
+        // This seems not safe, so skip it in restricted mode
+        if (!$this->isRestrictedModeEnabled()) {
+            if (preg_match("/\{([^}]*)\}/", $matched, $sty)) {
+                if ($sty[1] = $this->cleanAttribs($sty[1])) {
+                    $style[] = rtrim($sty[1], ';');
+                }
 
-            $matched = str_replace($sty[0], '', $matched);
+                $matched = str_replace($sty[0], '', $matched);
+            }
         }
 
         if (preg_match("/\[([^]]+)\]/U", $matched, $lng)) {
@@ -2122,49 +2125,7 @@ class Parser
             }
         }
 
-        if ($this->isRestrictedModeEnabled()) {
-            $o = array();
-            $class = trim($autoclass);
-
-            if ($class) {
-                $o['class'] = $this->cleanAttribs($class);
-            }
-
-            if ($lang) {
-                $o['lang'] = $this->cleanAttribs($lang);
-            }
-
-            ksort($o);
-            return $o;
-        } else {
-            $class = trim($class . ' ' . $autoclass);
-        }
-
         $o = array();
-
-        if ($class) {
-            $o['class'] = $this->cleanAttribs($class);
-        }
-
-        if ($colspan) {
-            $o['colspan'] = $this->cleanAttribs($colspan);
-        }
-
-        if ($id && $include_id) {
-            $o['id'] = $this->cleanAttribs($id);
-        }
-
-        if ($lang) {
-            $o['lang'] = $this->cleanAttribs($lang);
-        }
-
-        if ($rowspan) {
-            $o['rowspan'] = $this->cleanAttribs($rowspan);
-        }
-
-        if ($span) {
-            $o['span'] = $this->cleanAttribs($span);
-        }
 
         if ($style) {
             $so = '';
@@ -2190,6 +2151,49 @@ class Parser
 
             $style = trim(str_replace(array("\n", ';;'), array('', ';'), $so));
             $o['style'] = $style;
+        }
+
+        if ($this->isRestrictedModeEnabled()) {
+            $class = trim($autoclass);
+
+            if ($class) {
+                $o['class'] = $this->cleanAttribs($class);
+            }
+
+            if ($lang) {
+                $o['lang'] = $this->cleanAttribs($lang);
+            }
+
+            // Step execution here if in restricted mode
+            ksort($o);
+            return $o;
+
+        } else {
+            $class = trim($class . ' ' . $autoclass);
+        }
+
+        if ($class) {
+            $o['class'] = $this->cleanAttribs($class);
+        }
+
+        if ($colspan) {
+            $o['colspan'] = $this->cleanAttribs($colspan);
+        }
+
+        if ($id && $include_id) {
+            $o['id'] = $this->cleanAttribs($id);
+        }
+
+        if ($lang) {
+            $o['lang'] = $this->cleanAttribs($lang);
+        }
+
+        if ($rowspan) {
+            $o['rowspan'] = $this->cleanAttribs($rowspan);
+        }
+
+        if ($span) {
+            $o['span'] = $this->cleanAttribs($span);
         }
 
         if ($width) {
