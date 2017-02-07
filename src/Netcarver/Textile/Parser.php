@@ -17,7 +17,7 @@
  *
  * Additions and fixes Copyright (c) 2006    Alex Shiels       https://twitter.com/tellyworth
  * Additions and fixes Copyright (c) 2010    Stef Dawson       http://stefdawson.com/
- * Additions and fixes Copyright (c) 2010-14 Netcarver         https://github.com/netcarver
+ * Additions and fixes Copyright (c) 2010-16 Netcarver         https://github.com/netcarver
  * Additions and fixes Copyright (c) 2011    Jeff Soo          http://ipsedixit.net/
  * Additions and fixes Copyright (c) 2012    Robert Wetzlmayr  http://wetzlmayr.com/
  * Additions and fixes Copyright (c) 2012-14 Jukka Svahn       http://rahforum.biz/
@@ -350,7 +350,7 @@ class Parser
      * @var string
      */
 
-    protected $ver = '3.5.5';
+    protected $ver = '3.6.0';
 
     /**
      * Regular expression snippets.
@@ -2052,7 +2052,7 @@ class Parser
         }
 
         if ($element == 'td' or $element == 'tr') {
-            if (preg_match("/($this->vlgn)/", $matched, $vert)) {
+            if (preg_match("/^($this->vlgn)/", $matched, $vert)) {
                 $style[] = "vertical-align:" . $this->vAlign($vert[1]);
             }
         }
@@ -4108,6 +4108,25 @@ class Parser
     }
 
     /**
+     * Checks the given path to see if it lies within, or below, the document root
+     *
+     * @param  string Path to check
+     * @return bool True if path is within the image document root
+     * @see    Parser::images()
+     */
+
+    protected function isInDocumentRootDirectory($path)
+    {
+        $realpath = realpath($path);
+        if ($realpath) {
+            $root     = str_replace('\\', '/', $this->getDocumentRootDirectory());
+            $realpath = str_replace('\\', '/', $realpath);
+            return (0 === strpos($realpath, $root));
+        }
+        return false;
+    }
+
+    /**
      * Formats an image and stores it on the shelf.
      *
      * @param  array  $m Options
@@ -4158,10 +4177,11 @@ class Parser
             ->title($title);
 
         if (!$this->dimensionless_images && $this->isRelUrl($url)) {
-            $real_location = realpath($this->getDocumentRootDirectory().ltrim($url, '\\/'));
-
+            $location = $this->getDocumentRootDirectory().ltrim($url, '\\/');
+            $real_location = realpath($location);
             if ($real_location) {
-                if ($size = getimagesize($real_location)) {
+                $location_ok = $this->isInDocumentRootDirectory($real_location);
+                if ($location_ok && $size = getimagesize($real_location)) {
                     $img->height($size[1])->width($size[0]);
                 }
             }
