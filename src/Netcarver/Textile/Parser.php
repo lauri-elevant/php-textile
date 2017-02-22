@@ -2806,6 +2806,12 @@ class Parser
                 }
             }
 
+            // If the user puched in more than the 2 linebreaks to separatte the block
+            // we preserve the rest of the linebreaks as <br> elements
+            if (strlen($whitespace) > 2 && str_replace("\n", '', $whitespace) === '') {
+                $whitespace = str_repeat('<br />', strlen($whitespace)-2);
+            }
+            
             $block = $this->doPBr($block);
             $block = $whitespace. str_replace('<br>', '<br />', $block);
 
