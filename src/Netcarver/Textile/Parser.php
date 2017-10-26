@@ -3702,7 +3702,13 @@ class Parser
         } else {
             $inner = str_replace("\n", ' ', $m['inner']);
         }
+        
         $url = $m['urlx'];
+        
+        if (strpos($url, '://') === false) {
+            $url = 'http://' . $url;
+        }
+        
         $m = array();
 
         // Treat empty inner part as an invalid link.
