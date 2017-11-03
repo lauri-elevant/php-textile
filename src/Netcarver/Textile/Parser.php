@@ -3705,7 +3705,7 @@ class Parser
         
         $url = $m['urlx'];
         
-        if (strpos($url, '://') === false) {
+        if (strpos($url, '#') !== 0 && strpos($url, '://') === false) {
             $url = 'http://' . $url;
         }
         
