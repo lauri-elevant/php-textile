@@ -2029,7 +2029,7 @@ class Parser
 
     protected function parseAttribsToArray($in, $element = '', $include_id = true, $autoclass = '')
     {
-        $style = '';
+        $style = [];
         $class = '';
         $lang = '';
         $colspan = '';
@@ -2127,7 +2127,7 @@ class Parser
 
         $o = array();
 
-        if ($style) {
+        if (!empty($style)) {
             $so = '';
             $tmps = array();
 
@@ -2149,8 +2149,7 @@ class Parser
                 }
             }
 
-            $style = trim(str_replace(array("\n", ';;'), array('', ';'), $so));
-            $o['style'] = $style;
+            $o['style'] = trim(str_replace(array("\n", ';;'), array('', ';'), $so));
         }
 
         if ($this->isRestrictedModeEnabled()) {
@@ -2826,7 +2825,6 @@ class Parser
             } else {
                 $whitespace = '';
             }
-
         }
 
         if ($ext) {
